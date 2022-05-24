@@ -18,17 +18,18 @@ exports.getUser = async (req, res, next) => {
       condition += "where categories = '" + categories + "'";
     }
 
-    const [row] = await conn.execute("SELECT * FROM `tabel_bank` " + condition);
+    const param = req.query.param;
+
+    if (param) {
+      condition += "and ( name like '%" + param + "%' OR fulladdress like '%" + param + "%' )";
+    }
+
+    let sqlquery = "SELECT * FROM `tabel_bank` where 1=1 " + condition;
+    const [row] = await conn.execute(sqlquery);
     if (row.length > 0) {
       return res.json({
         data: row,
       });
-    }
-
-    const search = req.query.search;
-    let s = "";
-    if (search) {
-      s == "";
     }
 
     res.json({
